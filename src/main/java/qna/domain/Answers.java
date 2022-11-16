@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,9 @@ public class Answers {
 
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
         for (Answer answer : answers) {
-            answer.validateOwner(loginUser);
-            deleteHistories.add(answer.delete());
+            deleteHistories.add(answer.delete(loginUser, now));
         }
         return deleteHistories;
     }

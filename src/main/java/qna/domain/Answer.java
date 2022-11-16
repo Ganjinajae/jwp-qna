@@ -117,9 +117,10 @@ public class Answer extends BaseEntity {
         return Objects.hash(id, writer, question, contents, deleted);
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User loginUser, LocalDateTime now) throws CannotDeleteException {
+        validateOwner(loginUser);
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+        return new DeleteHistory(ContentType.ANSWER, id, writer, now);
     }
 
     public void validateOwner(User loginUser) throws CannotDeleteException {

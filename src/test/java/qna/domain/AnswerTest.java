@@ -3,6 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 
@@ -39,12 +40,12 @@ public class AnswerTest {
     }
 
     @Test
-    void 삭제처리() {
+    void 삭제처리() throws CannotDeleteException {
         User user1 = userRepository.save(new User("userId", "password", "name", "email"));
         Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user1));
         Answer answer1 = answerRepository.save(new Answer(user1, question1, "contents"));
 
-        DeleteHistory delete = answer1.delete();
+        DeleteHistory delete = answer1.delete(user1, LocalDateTime.now());
 
         assertThat(answer1.isDeleted()).isTrue();
         assertThat(delete).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer1.getId(), user1, LocalDateTime.now()));
